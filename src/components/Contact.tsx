@@ -12,13 +12,14 @@ import {
   Phone,
   Send,
 } from "lucide-react";
-import {
-  createWhatsAppLink,
-  siteConfig,
-} from "@/config/site";
+import { createWhatsAppLink, siteConfig } from "@/config/site";
 
 export default function Contact() {
   const [messageSent, setMessageSent] = useState(false);
+
+  const directWhatsAppUrl = createWhatsAppLink(
+    "Hello, I need AC service in Qatar. Please send me more information.",
+  );
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,11 +27,11 @@ export default function Contact() {
     const form = event.currentTarget;
     const data = new FormData(form);
 
-    const name = String(data.get("name") ?? "");
-    const phone = String(data.get("phone") ?? "");
-    const area = String(data.get("area") ?? "");
-    const service = String(data.get("service") ?? "");
-    const details = String(data.get("details") ?? "");
+    const name = String(data.get("name") ?? "").trim();
+    const phone = String(data.get("phone") ?? "").trim();
+    const area = String(data.get("area") ?? "").trim();
+    const service = String(data.get("service") ?? "").trim();
+    const details = String(data.get("details") ?? "").trim();
 
     const message = [
       "Hello, I would like to request AC service.",
@@ -42,9 +43,12 @@ export default function Contact() {
       `Details: ${details || "Not provided"}`,
     ].join("\n");
 
-    const whatsappUrl = createWhatsAppLink(message);
+    window.open(
+      createWhatsAppLink(message),
+      "_blank",
+      "noopener,noreferrer",
+    );
 
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     setMessageSent(true);
     form.reset();
   }
@@ -52,87 +56,124 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden bg-white py-24 sm:py-32"
+      className="relative overflow-hidden bg-white py-16 sm:py-24 lg:py-32"
     >
-      <div className="absolute -left-32 bottom-0 size-96 rounded-full bg-cyan-100/60 blur-[130px]" />
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute -left-40 bottom-0 size-80 rounded-full bg-cyan-100/70 blur-[110px] sm:size-96" />
 
-      <div className="section-shell relative grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="reveal-up rounded-4xl bg-[#061322] p-7 text-white shadow-2xl sm:p-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
-            <MessageCircle size={15} />
+      <div className="pointer-events-none absolute -right-40 top-10 size-72 rounded-full bg-blue-100/60 blur-[120px]" />
+
+      <div className="relative mx-auto grid max-w-7xl gap-6 px-4 sm:gap-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:gap-10 lg:px-8">
+        {/* Contact information */}
+        <div className="reveal-up overflow-hidden rounded-3xl bg-[#061322] p-5 text-white shadow-2xl shadow-slate-950/15 sm:rounded-4xl sm:p-8 lg:p-10">
+          <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-200 sm:px-4 sm:text-xs sm:tracking-[0.18em]">
+            <MessageCircle size={15} className="shrink-0" />
             Contact us
           </div>
 
-          <h2 className="font-display mt-6 text-4xl font-bold tracking-[-0.04em]">
+          <h2 className="font-display mt-5 text-3xl font-bold tracking-[-0.04em] sm:mt-6 sm:text-4xl lg:text-5xl">
             Need AC assistance?
           </h2>
 
-          <p className="mt-5 leading-7 text-slate-300">
-            Contact the service team directly or submit your details through
-            the quotation form.
+          <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300 sm:mt-5 sm:text-base">
+            Contact our team directly or send your service details using the
+            quotation form.
           </p>
 
-          <div className="mt-9 space-y-4">
+          <div className="mt-7 space-y-3 sm:mt-9 sm:space-y-4">
+            {/* Phone */}
             <a
               href={siteConfig.phoneHref}
-              className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5.5 p-4 transition hover:border-cyan-300/30 hover:bg-white/8.5"
+              className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/5.5 p-3.5 transition hover:border-cyan-300/30 hover:bg-white/8.5 sm:gap-4 sm:p-4"
             >
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-cyan-400 text-slate-950">
-                <Phone size={21} />
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-400 text-slate-950 sm:size-12">
+                <Phone size={20} />
               </span>
 
-              <span>
+              <span className="min-w-0 flex-1">
                 <span className="block text-xs text-white/50">Call us</span>
-                <span className="mt-1 block font-bold">
+
+                <span className="mt-1 block truncate text-sm font-bold sm:text-base">
                   {siteConfig.phoneDisplay}
                 </span>
               </span>
 
               <ArrowRight
                 size={18}
-                className="ml-auto text-white/30 transition group-hover:translate-x-1 group-hover:text-cyan-300"
+                className="shrink-0 text-white/30 transition group-hover:translate-x-1 group-hover:text-cyan-300"
               />
             </a>
 
+            {/* WhatsApp */}
             <a
-              href={`mailto:${siteConfig.email}`}
-              className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5.5 p-4 transition hover:border-cyan-300/30 hover:bg-white/8.5"
+              href={directWhatsAppUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex min-w-0 items-center gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-3.5 transition hover:border-emerald-300/40 hover:bg-emerald-400/15 sm:gap-4 sm:p-4"
             >
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300">
-                <Mail size={21} />
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-white sm:size-12">
+                <MessageCircle size={21} />
               </span>
 
-              <span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-xs text-white/50">WhatsApp</span>
+
+                <span className="mt-1 block text-sm font-bold sm:text-base">
+                  Chat with our team
+                </span>
+              </span>
+
+              <ArrowRight
+                size={18}
+                className="shrink-0 text-white/30 transition group-hover:translate-x-1 group-hover:text-emerald-300"
+              />
+            </a>
+
+            {/* Email */}
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="group flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/5.5 p-3.5 transition hover:border-cyan-300/30 hover:bg-white/8.5 sm:gap-4 sm:p-4"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300 sm:size-12">
+                <Mail size={20} />
+              </span>
+
+              <span className="min-w-0 flex-1">
                 <span className="block text-xs text-white/50">Email</span>
-                <span className="mt-1 block font-bold">
+
+                <span className="mt-1 block break-all text-sm font-bold sm:text-base">
                   {siteConfig.email}
                 </span>
               </span>
             </a>
 
-            <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5.5 p-4">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300">
-                <MapPin size={21} />
+            {/* Location */}
+            <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/5.5 p-3.5 sm:gap-4 sm:p-4">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300 sm:size-12">
+                <MapPin size={20} />
               </span>
 
-              <span>
+              <span className="min-w-0">
                 <span className="block text-xs text-white/50">Location</span>
-                <span className="mt-1 block font-bold">
+
+                <span className="mt-1 block text-sm font-bold leading-5 sm:text-base">
                   {siteConfig.address}
                 </span>
               </span>
             </div>
 
-            <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5.5 p-4">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300">
-                <Clock3 size={21} />
+            {/* Working hours */}
+            <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/5.5 p-3.5 sm:gap-4 sm:p-4">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-cyan-400/15 text-cyan-300 sm:size-12">
+                <Clock3 size={20} />
               </span>
 
-              <span>
+              <span className="min-w-0">
                 <span className="block text-xs text-white/50">
                   Working hours
                 </span>
-                <span className="mt-1 block font-bold">
+
+                <span className="mt-1 block text-sm font-bold leading-5 sm:text-base">
                   {siteConfig.workingHours}
                 </span>
               </span>
@@ -140,24 +181,28 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="reveal-up rounded-4xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-900/8 sm:p-10">
+        {/* Quotation form */}
+        <div className="reveal-up rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/[0.07] sm:rounded-4xl sm:p-8 lg:p-10">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-700">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-700 sm:text-xs sm:tracking-[0.2em]">
               Request a quotation
             </p>
 
-            <h2 className="font-display mt-3 text-3xl font-bold tracking-[-0.035em] text-slate-950 sm:text-4xl">
+            <h2 className="font-display mt-3 text-2xl font-bold tracking-[-0.035em] text-slate-950 sm:text-3xl lg:text-4xl">
               Tell us what service you need
             </h2>
 
-            <p className="mt-4 text-sm leading-6 text-slate-600">
-              After submission, your request will open directly in WhatsApp.
+            <p className="mt-3 text-sm leading-6 text-slate-600 sm:mt-4">
+              Your request will open directly in WhatsApp after submission.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block">
+          <form
+            onSubmit={handleSubmit}
+            className="mt-7 space-y-4 sm:mt-8 sm:space-y-5"
+          >
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              <label className="block min-w-0">
                 <span className="mb-2 block text-sm font-semibold text-slate-700">
                   Full name
                 </span>
@@ -166,12 +211,13 @@ export default function Contact() {
                   type="text"
                   name="name"
                   required
+                  autoComplete="name"
                   placeholder="Your name"
-                  className="h-13 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
+                  className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
                 />
               </label>
 
-              <label className="block">
+              <label className="block min-w-0">
                 <span className="mb-2 block text-sm font-semibold text-slate-700">
                   Mobile number
                 </span>
@@ -180,14 +226,16 @@ export default function Contact() {
                   type="tel"
                   name="phone"
                   required
+                  inputMode="tel"
+                  autoComplete="tel"
                   placeholder="+974"
-                  className="h-13 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
+                  className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
                 />
               </label>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              <label className="block min-w-0">
                 <span className="mb-2 block text-sm font-semibold text-slate-700">
                   Area
                 </span>
@@ -196,7 +244,7 @@ export default function Contact() {
                   name="area"
                   required
                   defaultValue=""
-                  className="h-13 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
+                  className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
                 >
                   <option value="" disabled>
                     Select your area
@@ -210,7 +258,7 @@ export default function Contact() {
                 </select>
               </label>
 
-              <label className="block">
+              <label className="block min-w-0">
                 <span className="mb-2 block text-sm font-semibold text-slate-700">
                   Required service
                 </span>
@@ -219,11 +267,12 @@ export default function Contact() {
                   name="service"
                   required
                   defaultValue=""
-                  className="h-13 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
+                  className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
                 >
                   <option value="" disabled>
                     Choose a service
                   </option>
+
                   <option value="AC Repair">AC Repair</option>
                   <option value="AC Installation">AC Installation</option>
                   <option value="AC Deep Cleaning">AC Deep Cleaning</option>
@@ -243,26 +292,32 @@ export default function Contact() {
 
               <textarea
                 name="details"
-                rows={5}
+                rows={4}
                 placeholder="Tell us about the AC problem..."
-                className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100"
+                className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:ring-4 focus:ring-cyan-100 sm:min-h-32"
               />
             </label>
 
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-3 rounded-xl bg-linear-to-r from-cyan-500 to-cyan-400 px-6 py-4 font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:-translate-y-1 hover:shadow-xl"
+              className="group flex min-h-13 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-cyan-400 px-4 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-cyan-200 sm:gap-3 sm:px-6 sm:py-4 sm:text-base"
             >
-              Send request through WhatsApp
+              <span className="text-center">
+                Send request through WhatsApp
+              </span>
+
               <Send
                 size={18}
-                className="transition group-hover:translate-x-1"
+                className="shrink-0 transition group-hover:translate-x-1"
               />
             </button>
 
             {messageSent && (
-              <p className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-700">
-                <CheckCircle2 size={17} />
+              <p
+                aria-live="polite"
+                className="flex items-center justify-center gap-2 text-center text-sm font-semibold text-emerald-700"
+              >
+                <CheckCircle2 size={17} className="shrink-0" />
                 Your request was prepared in WhatsApp.
               </p>
             )}
